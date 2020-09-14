@@ -48,7 +48,24 @@ let subKey = 'insert your sub key';
 
 let channelName = "messageChannel";
 
+let myID = "myUsername";
+
+//create an array to hold the incoming data
+let dataReceived = [];
 ```
+#### Create an object variable that will store / send your message data
+
+```javascript
+let myMessage = 
+{
+messageNumber:20,
+messageText:"sometext",
+anotherNumber: 200.3
+  
+}
+```
+
+
 
 #### Within the setup function initialize the connection, subscribe to the channel, and create a listener to run a callback function any time a new message arrives.
 
@@ -64,7 +81,8 @@ function setup()
   {
     publish_key   : pubKey,  //get these from the pubnub account online
     subscribe_key : subKey,  
-    ssl: true  //enables a secure connection. 
+    ssl: true,  //enables a secure connection. 
+    uuid: myID
   });
   
   //attach callbacks to the pubnub object to handle messages and connections
@@ -80,11 +98,9 @@ function setup()
 function readIncoming(inMessage) //when new data comes in it triggers this function, 
 {                               // this works becsuse we subscribed to the channel in setup()
   
-  // simple error check to match the incoming to the channelName
-  if(inMessage.channel == channelName)
-  {
-  incomingText = inMessage.message.messageText;
-  }
+  //save the message into an array
+  dataReceived.push(inMessage);
+
 }
 ```
 
@@ -96,11 +112,17 @@ function sendTheMessage() {
   // Send Data to the server to draw it in all other canvases
   dataServer.publish(
     {
+      //assign values
+      myMessage.messageNumber = 22;
+      myMessage.messageText = "somethingToSend";
+      myMessage.anotherNumber = 99.4;
+
+
       channel: channelName,
       message: 
       {
         who: whoAreYou.value(),
-        messageText: sendText.value()       //get the value from the text box and send it as part of the message   
+        messageText: myMessage
       }
     });
 
